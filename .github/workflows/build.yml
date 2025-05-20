@@ -7,10 +7,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential git dkms bc linux-headers-generic
+        sudo apt install -y build-essential dkms git linux-headers-$(uname -r)
 
     - name: Clone driver and patch USB ID
       run: |
@@ -24,7 +27,7 @@ jobs:
         make -j$(nproc)
 
     - name: Upload built module
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: rtl8821au-ko
         path: rtl8812au/8821au.ko
