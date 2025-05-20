@@ -5,14 +5,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
-        sudo apt-get update
+        sudo apt update
         sudo apt install -y build-essential dkms git linux-headers-$(uname -r)
 
     - name: Clone driver and patch USB ID
@@ -26,9 +27,14 @@ jobs:
         cd rtl8812au
         make -j$(nproc)
 
-    - name: Upload built module
+    - name: List generated kernel modules
+      run: |
+        echo "Searching for *.ko files in rtl8812au/"
+        find rtl8812au -name '*.ko'
+
+    - name: Upload built module(s)
       uses: actions/upload-artifact@v4
       with:
-        name: rtl8821au-ko
-        path: rtl8812au/8821au.ko
+        name: rtl8821au-modules
+        path: rtl8812au/**/*.ko
 
